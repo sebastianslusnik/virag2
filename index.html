@@ -23,15 +23,15 @@
 :root{--bg:#0b0b12;--card:#141425;--muted:#8b8ba7;--text:#f6f6fb;--primary:#7c3aed;--primary-2:#a78bfa;--accent:#22d3ee;--danger:#ef4444;--ok:#22c55e;--ring:rgba(124,58,237,.4)}
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;height: 100vh;background:#0f0a1e;color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,"Apple Color Emoji","Segoe UI Emoji"}
-.container{max-width:-webkit-fill-available;margin:0 auto;padding:0px;display:flex;flex-direction:column;height: 100vh;gap:12px}
+body{margin:0;height: 99vh;background:#0f0a1e;color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+.container{max-width:-webkit-fill-available;margin:0 auto;padding:0px;display:flex;flex-direction:column;height:99vh;gap:12px}
 .header{display:flex;align-items:center;justify-content:space-between}
 .title{font-weight:700;letter-spacing:.3px;font-size:18px}
 .badge{font-size:12px;color:#c7c7df;background:#1f1f37;border:1px solid #2a2a48;padding:2px 8px;border-radius:999px}
-.panel{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0)) border-box;background-clip:padding-box;border:1px solid rgba(255,255,255,.08);border-radius:16px;backdrop-filter:blur(6px)}
-.split{height:100vh;display:flex;flex-direction:column;gap:0px}
+.panel{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0)) border-box;background-clip:padding-box;border:none;border-radius:0px;backdrop-filter:blur(6px)}
+.split{height:99vh;display:flex;flex-direction:column;gap:0px}
 .half{flex:1;min-height:0;max-height: fit-content}
-.calendar{height:100%;display:grid;grid-template-rows:auto 24px 1fr;gap:10px;padding:12px}
+.calendar{height:100%;display:grid;grid-template-rows:auto 24px 1fr;gap:10px;padding:12px;padding-top: 30px;}
 .cal-head{display:flex;align-items:center;justify-content:space-between}
 .cal-month{font-weight:700;font-size:16px}
 .icon-btn{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#1a1a2d;border:1px solid #252545;color:#d9d9f4;cursor:pointer;transition:.15s}
