@@ -96,7 +96,7 @@ hr.sep{border:0;border-top:1px solid rgba(255,255,255,.08);margin:8px 0}
           <button class="icon-btn" id="prevMonth" aria-label="Előző hónap">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
-          <div id="hidder" class="cal-month" id="monthLabel"></div>
+          <div class="cal-month" id="monthLabel"></div>
           <button class="icon-btn" id="nextMonth" aria-label="Következő hónap">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
@@ -213,7 +213,7 @@ hr.sep{border:0;border-top:1px solid rgba(255,255,255,.08);margin:8px 0}
   </button>
 </div>
 <script>
-  document.getElementById('hidder').addEventListener('click', () => { const target = document.getElementById('hiddened'); const current = getComputedStyle(target).flexGrow; if (current === "0.1") { target.style.flex = "1"; } else { target.style.flex = "0.1"; } });
+  document.getElementById('monthLabel').addEventListener('click', () => { const target = document.getElementById('hiddened'); const current = getComputedStyle(target).flexGrow; if (current === "0.1") { target.style.flex = "1"; } else { target.style.flex = "0.1"; } });
 const MASTER_KEY="$2a$10$LitFnKme7gkjI/1sQi1GZOqoCXWxUPTCLAKFCjRfR5WccGOzO/hx6";
 const ACCESS_KEY="$2a$10$kRkpn5Aju0/avKQUfbwtMe5Wd7XzzN5ub/C2Lt/f52MqLRm7jm/Yy";
 const BINS={customers:"69844befae596e708f12c39b",services:"698449e9d0ea881f40a2541f",bookings:"698449d743b1c97be966e8ce"};
