@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7c3aed">
+<title>Szépségszalon Időpontfoglaló</title>
+<link rel="preconnect" href="https://api.jsonbin.io">
+<style>
+:root{--bg:#0b0b12;--card:#141425;--muted:#8b8ba7;--text:#f6f6fb;--primary:#7c3aed;--primary-2:#a78bfa;--accent:#22d3ee;--danger:#ef4444;--ok:#22c55e;--ring:rgba(124,58,237,.4)}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(1200px 800px at 100% -10%,#1b1333 0,#0b0b12 50%),var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+.container{max-width:520px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.header{display:flex;align-items:center;justify-content:space-between}
+.title{font-weight:700;letter-spacing:.3px;font-size:18px}
+.badge{font-size:12px;color:#c7c7df;background:#1f1f37;border:1px solid #2a2a48;padding:2px 8px;border-radius:999px}
+.panel{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0)) border-box;background-clip:padding-box;border:1px solid rgba(255,255,255,.08);border-radius:16px;backdrop-filter:blur(6px)}
+.split{height:calc(100dvh - 88px);display:flex;flex-direction:column;gap:12px}
+.half{flex:1;min-height:0}
+.calendar{height:100%;display:grid;grid-template-rows:auto 24px 1fr;gap:10px;padding:12px}
+.cal-head{display:flex;align-items:center;justify-content:space-between}
+.cal-month{font-weight:700;font-size:16px}
+.icon-btn{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#1a1a2d;border:1px solid #252545;color:#d9d9f4;cursor:pointer;transition:.15s}
+.icon-btn:active{transform:scale(.97)}
+.weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;color:var(--muted);font-size:11px;text-align:center}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-content:start;overflow:auto}
+.day{position:relative;display:grid;place-items:center;height:44px;border-radius:12px;background:#121227;border:1px solid #1f1f3a;color:#e8e8ff;cursor:pointer;transition:.15s}
+.day.muted{color:#747493;background:#0f0f1c;border-color:#17172e}
+.day:hover{border-color:#343467}
+.day.today{outline:2px solid var(--ring);outline-offset:0}
+.day.selected{background:linear-gradient(180deg,#231c44,#1a1440);border-color:#3b2d89;box-shadow:0 0 0 1px rgba(124,58,237,.3) inset}
+.dot{position:absolute;bottom:6px;width:6px;height:6px;border-radius:999px;background:var(--accent);opacity:.95}
+.bottom{height:100%;display:flex;flex-direction:column}
+.toolbar{display:flex;gap:8px;padding:10px;border-bottom:1px solid rgba(255,255,255,.08)}
+.tab{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:#15152a;border:1px solid #212145;border-radius:12px;padding:10px 12px;font-weight:600;color:#e8e8ff;cursor:pointer}
+.tab.secondary{background:#101023;color:#c9c9e6}
+.list{padding:8px;overflow:auto;display:flex;flex-direction:column;gap:8px}
+.item{display:flex;align-items:center;gap:12px;padding:12px;background:#121227;border:1px solid #1f1f3a;border-radius:14px}
+.time{min-width:64px;font-weight:800;letter-spacing:.3px}
+.tag{font-size:11px;color:#bfbfe3;background:#201f3e;border:1px solid #2b2a52;border-radius:999px;padding:2px 8px}
+.meta{flex:1;min-width:0}
+.meta .name{font-weight:700}
+.meta .srv{color:#c9c9e6;font-size:12px}
+.actions{display:flex;gap:6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(180deg,#7c3aed,#6d28d9);color:white;border:0;border-radius:12px;padding:12px 14px;font-weight:700;cursor:pointer;box-shadow:0 8px 18px rgba(124,58,237,.35)}
+.btn:active{transform:translateY(1px)}
+.btn.icon{padding:10px 12px;border-radius:10px}
+.btn.ghost{background:#181833;border:1px solid #26264a;color:#e9e9ff;box-shadow:none}
+.btn.danger{background:linear-gradient(180deg,#ef4444,#b91c1c);box-shadow:0 8px 18px rgba(239,68,68,.35)}
+.fab{position:fixed;inset:auto 20px 20px auto;z-index:30}
+.empty{padding:28px;text-align:center;color:#bdbde0}
+.badgelite{font-size:11px;color:#cfcfee}
+.modal{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(8,8,16,.5);backdrop-filter:blur(6px);z-index:40}
+.modal.show{display:flex}
+.sheet{width:100%;max-width:520px;border-top-left-radius:16px;border-top-right-radius:16px;background:#0f0f20;border:1px solid rgba(255,255,255,.08);padding:14px 14px 18px;max-height:86dvh;overflow:auto}
+.sheet h3{margin:6px 0 12px;font-size:18px}
+.form{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;gap:10px}
+.input,select{width:100%;padding:12px 12px;background:#121227;border:1px solid #242448;border-radius:12px;color:#f4f4ff;outline:none}
+.input:focus,select:focus{border-color:#3a2d88;box-shadow:0 0 0 4px rgba(124,58,237,.15)}
+.label{font-size:12px;color:#c9c9e6;margin-bottom:4px}
+.inline{display:flex;align-items:center;gap:8px}
+.list-manage{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.manage-item{display:flex;align-items:center;gap:10px;background:#121227;border:1px solid #1f1f3a;border-radius:12px;padding:10px}
+.small{font-size:12px;color:#bfbfe3}
+.kbd{font-size:11px;padding:2px 6px;border-radius:6px;border:1px dashed #35355f;color:#bdbde9}
+.status{display:inline-flex;align-items:center;gap:8px;font-size:12px;padding:8px 10px;border-radius:10px;border:1px solid #234; background:#0e1420;color:#cfe}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);padding:10px 14px;border-radius:12px;background:#121227;border:1px solid #1f1f3a;color:#d7f3ff;display:none;z-index:50}
+.toast.show{display:block}
+hr.sep{border:0;border-top:1px solid rgba(255,255,255,.08);margin:8px 0}
+.smallbtn{padding:8px 10px;border-radius:10px;background:#181833;border:1px solid #26264a;color:#e9e9ff;cursor:pointer}
+.stats{display:flex;gap:8px;flex-wrap:wrap}
+.pill{background:#15152a;border:1px dashed #2a2a4d;padding:6px 10px;border-radius:999px;color:#c9c9e6;font-size:12px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="title">Szépségszalon időpontok</div>
+    <div class="badge">Mobil nézet</div>
+  </div>
+  <div class="panel split">
+    <div class="half">
+      <div class="calendar">
+        <div class="cal-head">
+          <button class="icon-btn" id="prevMonth" aria-label="Előző hónap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="cal-month" id="monthLabel"></div>
+          <button class="icon-btn" id="nextMonth" aria-label="Következő hónap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="weekdays">
+          <div>H</div><div>K</div><div>Sze</div><div>Cs</div><div>P</div><div>Szo</div><div>V</div>
+        </div>
+        <div class="grid" id="calendarGrid"></div>
+      </div>
+    </div>
+    <div class="half bottom">
+      <div class="toolbar">
+        <button class="tab" id="openNewBooking">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Új időpont
+        </button>
+        <button class="tab secondary" id="openCustomers">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM3 21a7 7 0 0114 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Ügyfelek
+        </button>
+        <button class="tab secondary" id="openServices">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Szolgáltatások
+        </button>
+      </div>
+      <div class="list" id="appointmentsList"></div>
+    </div>
+  </div>
+</div>
+
+<div class="fab">
+  <button class="btn" id="fabNew">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    Hozzáadás
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal" id="bookingModal">
+  <div class="sheet">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <h3 id="bookingTitle">Új időpont</h3>
+      <div class="inline">
+        <span class="kbd">JSONBin</span>
+        <button class="smallbtn" id="closeBooking">Bezárás</button>
+      </div>
+    </div>
+    <div class="stats" id="bookingStats"></div>
+    <hr class="sep">
+    <form class="form" id="bookingForm">
+      <div>
+        <div class="label">Dátum</div>
+        <input class="input" type="date" id="bkDate" required>
+      </div>
+      <div>
+        <div class="label">Idő</div>
+        <input class="input" type="time" id="bkTime" required>
+      </div>
+      <div>
+        <div class="label">Ügyfél</div>
+        <div class="row">
+          <select id="bkCustomer" required></select>
+          <button type="button" class="btn ghost" id="quickAddCustomer">Új</button>
+        </div>
+      </div>
+      <div>
+        <div class="label">Szolgáltatás</div>
+        <div class="row">
+          <select id="bkService" required></select>
+          <button type="button" class="btn ghost" id="quickAddService">Új</button>
+        </div>
+      </div>
+      <div class="row">
+        <button type="submit" class="btn" id="saveBooking">Mentés</button>
+        <button type="button" class="btn ghost" id="cancelBooking">Mégse</button>
+        <button type="button" class="btn danger" id="deleteBooking" style="display:none">Törlés</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="customersModal">
+  <div class="sheet">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <h3>Ügyfelek kezelése</h3>
+      <button class="smallbtn" id="closeCustomers">Bezárás</button>
+    </div>
+    <div class="form">
+      <div class="row">
+        <input class="input" id="custName" placeholder="Név">
+        <input class="input" id="custPhone" placeholder="Telefon">
+        <button class="btn" id="addCustomer">Hozzáadás</button>
+      </div>
+      <div class="list-manage" id="customersList"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="servicesModal">
+  <div class="sheet">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <h3>Szolgáltatások kezelése</h3>
+      <button class="smallbtn" id="closeServices">Bezárás</button>
+    </div>
+    <div class="form">
+      <div class="row">
+        <input class="input" id="srvName" placeholder="Megnevezés">
+        <input class="input" id="srvPrice" type="number" min="0" step="1" placeholder="Ár (HUF)">
+        <input class="input" id="srvDuration" type="number" min="5" step="5" placeholder="Időtartam (perc)">
+        <button class="btn" id="addService">Hozzáadás</button>
+      </div>
+      <div class="list-manage" id="servicesList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const MASTER_KEY="$2a$10$LitFnKme7gkjI/1sQi1GZOqoCXWxUPTCLAKFCjRfR5WccGOzO/hx6";
+const ACCESS_KEY="$2a$10$kRkpn5Aju0/avKQUfbwtMe5Wd7XzzN5ub/C2Lt/f52MqLRm7jm/Yy";
+const BINS={customers:"69844befae596e708f12c39b",services:"698449e9d0ea881f40a2541f",bookings:"698449d743b1c97be966e8ce"};
+const BASE="https://api.jsonbin.io/v3/b";
+const huMonths=["január","február","március","április","május","június","július","augusztus","szeptember","október","november","december"];
+let state={today:new Date(),cursor:new Date(),selected:dateOnly(new Date()),customers:[],services:[],bookings:[],editingBooking:null,dayHasAppt:new Set()};
+
+function dateOnly(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate())}
+function pad(n){return n.toString().padStart(2,"0")}
+function ymd(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function hm(d){return pad(d.getHours())+":"+pad(d.getMinutes())}
+function parseISO(s){const [Y,M,D,hmPart]=s.split(/[T]/);const [h,m]=(hmPart||"00:00").split(":");return new Date(+Y, +M-1, +D, +h, +m)}
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1800)}
+async function fetchBin(id){const r=await fetch(`${BASE}/${id}/latest`,{headers:{"X-Master-Key":MASTER_KEY,"X-Access-Key":ACCESS_KEY}});const j=await r.json();return j.record||[]}
+async function putBin(id,data){const r=await fetch(`${BASE}/${id}`,{method:"PUT",headers:{"Content-Type":"application/json","X-Master-Key":MASTER_KEY,"X-Access-Key":ACCESS_KEY},body:JSON.stringify(data)});if(!r.ok) throw new Error("Hiba mentés közben")}
+function makeId(){return Date.now()+Math.floor(Math.random()*1000)}
+function ensureSets(){const set=new Set();state.bookings.forEach(b=>{const d=new Date(b.date);set.add(ymd(d))});state.dayHasAppt=set}
+function monthMatrix(d){const year=d.getFullYear(),month=d.getMonth();const first=new Date(year,month,1);const startOffset=(first.getDay()+6)%7;const daysIn=new Date(year,month+1,0).getDate();const prevDays=new Date(year,month,0).getDate();const cells=[];for(let i=startOffset-1;i>=0;i--){cells.push({d:new Date(year,month-1,prevDays-i),muted:true})}for(let i=1;i<=daysIn;i++){cells.push({d:new Date(year,month,i),muted:false})}const nextCount=42-cells.length;for(let i=1;i<=nextCount;i++){cells.push({d:new Date(year,month+1,i),muted:true})}return cells}
+function renderCalendar(){const label=document.getElementById("monthLabel");label.textContent=huMonths[state.cursor.getMonth()]+" "+state.cursor.getFullYear();const grid=document.getElementById("calendarGrid");grid.innerHTML="";ensureSets();monthMatrix(state.cursor).forEach(cell=>{const div=document.createElement("button");div.className="day"+(cell.muted?" muted":"");const isToday=ymd(cell.d)===ymd(state.today);if(isToday)div.classList.add("today");if(ymd(cell.d)===ymd(state.selected))div.classList.add("selected");div.textContent=cell.d.getDate();if(state.dayHasAppt.has(ymd(cell.d))){const dot=document.createElement("span");dot.className="dot";div.appendChild(dot)}div.addEventListener("click",()=>{state.selected=dateOnly(cell.d);state.cursor=new Date(cell.d.getFullYear(),cell.d.getMonth(),1);renderCalendar();renderAppointments()});grid.appendChild(div)})}
+function resolveCustomer(id){return state.customers.find(c=>c.id==id)}
+function resolveService(id){return state.services.find(s=>s.id==id)}
+function renderAppointments(){const list=document.getElementById("appointmentsList");list.innerHTML="";const dateKey=ymd(state.selected);const items=state.bookings.filter(b=>ymd(new Date(b.date))===dateKey).sort((a,b)=>new Date(a.date)-new Date(b.date));if(items.length===0){const div=document.createElement("div");div.className="empty";div.innerHTML=`<div style="display:flex;flex-direction:column;gap:8px;align-items:center">
+  <div class="status"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#38bdf8" stroke-width="2"/><path d="M8 12h8" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/></svg> Nincs időpont ezen a napon</div>
+  <div class="badgelite">${dateKey}</div>
+</div>`;list.appendChild(div);return}
+items.forEach(b=>{const c=resolveCustomer(b.customerId),s=resolveService(b.serviceId);const d=new Date(b.date);const row=document.createElement("div");row.className="item";const price=s&&s.price?new Intl.NumberFormat("hu-HU").format(+s.price)+" Ft":"";row.innerHTML=`<div class="time">${hm(d)}</div>
+<div class="meta">
+  <div class="name">${c?c.name:"Ismeretlen ügyfél"}</div>
+  <div class="srv">${s?s.name:"Ismeretlen szolgáltatás"} ${price?`• ${price}`:""}</div>
+</div>
+<div class="actions">
+  <button class="btn icon ghost" data-act="edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  <button class="btn icon danger" data-act="del"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M8 6v14h8V6M10 6V4h4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+</div>`;row.querySelector('[data-act="edit"]').onclick=()=>openBookingModal(b);row.querySelector('[data-act="del"]').onclick=()=>deleteBookingFlow(b.id);list.appendChild(row)})}
+function populateSelectors(){const custSel=document.getElementById("bkCustomer");custSel.innerHTML="";state.customers.sort((a,b)=>a.name.localeCompare(b.name,'hu')).forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent=`${c.name} ${c.phone?"• "+c.phone:""}`;custSel.appendChild(o)});const srvSel=document.getElementById("bkService");srvSel.innerHTML="";state.services.sort((a,b)=>a.name.localeCompare(b.name,'hu')).forEach(s=>{const o=document.createElement("option");o.value=s.id;o.textContent=`${s.name}${s.duration?" • "+s.duration+"p":""}${s.price?" • "+new Intl.NumberFormat("hu-HU").format(+s.price)+" Ft":""}`;srvSel.appendChild(o)})}
+function openBookingModal(b){const modal=document.getElementById("bookingModal");populateSelectors();state.editingBooking=b?{...b}:null;document.getElementById("bookingTitle").textContent=b?"Időpont szerkesztése":"Új időpont";const d=b?new Date(b.date):state.selected;document.getElementById("bkDate").value=ymd(d);document.getElementById("bkTime").value=hm(d);if(b){document.getElementById("bkCustomer").value=b.customerId;document.getElementById("bkService").value=b.serviceId}document.getElementById("deleteBooking").style.display=b?"inline-flex":"none";const stats=document.getElementById("bookingStats");const cntDay=state.bookings.filter(x=>ymd(new Date(x.date))===ymd(d)).length;stats.innerHTML=`<span class="pill">Kiválasztott nap: ${ymd(d)}</span><span class="pill">Foglalások: ${cntDay} db</span>`;modal.classList.add("show")}
+function closeBookingModal(){document.getElementById("bookingModal").classList.remove("show")}
+function openCustomersModal(){const modal=document.getElementById("customersModal");renderCustomersManage();modal.classList.add("show")}
+function closeCustomersModal(){document.getElementById("customersModal").classList.remove("show")}
+function openServicesModal(){const modal=document.getElementById("servicesModal");renderServicesManage();modal.classList.add("show")}
+function closeServicesModal(){document.getElementById("servicesModal").classList.remove("show")}
+function renderCustomersManage(){const wrap=document.getElementById("customersList");wrap.innerHTML="";state.customers.sort((a,b)=>a.name.localeCompare(b.name,'hu')).forEach(c=>{const row=document.createElement("div");row.className="manage-item";row.innerHTML=`<div style="flex:1"><div style="font-weight:700">${c.name}</div><div class="small">${c.phone||""}</div></div>
+<div class="actions">
+  <button class="btn icon ghost" data-act="edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  <button class="btn icon danger" data-act="del"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M8 6v14h8V6M10 6V4h4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+</div>`;row.querySelector('[data-act="edit"]').onclick=async()=>{const name=prompt("Név módosítása",c.name)||c.name;const phone=prompt("Telefon módosítása",c.phone||"")||"";await updateCustomer({...c,name,phone})};row.querySelector('[data-act="del"]').onclick=async()=>{if(!confirm("Biztosan törlöd az ügyfelet? A hozzá tartozó időpontok megmaradnak."))return;await deleteCustomer(c.id)};wrap.appendChild(row)})}
+function renderServicesManage(){const wrap=document.getElementById("servicesList");wrap.innerHTML="";state.services.sort((a,b)=>a.name.localeCompare(b.name,'hu')).forEach(s=>{const row=document.createElement("div");row.className="manage-item";row.innerHTML=`<div style="flex:1"><div style="font-weight:700">${s.name}</div><div class="small">${s.duration?`${s.duration} perc • `:""}${s.price?new Intl.NumberFormat("hu-HU").format(+s.price)+" Ft":""}</div></div>
+<div class="actions">
+  <button class="btn icon ghost" data-act="edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  <button class="btn icon danger" data-act="del"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M8 6v14h8V6M10 6V4h4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+</div>`;row.querySelector('[data-act="edit"]').onclick=async()=>{const name=prompt("Megnevezés módosítása",s.name)||s.name;const price=prompt("Ár (HUF)",s.price||"")||"";const duration=parseInt(prompt("Időtartam (perc)",s.duration||60)||60,10);await updateService({...s,name,price,duration:isNaN(duration)?60:duration})};row.querySelector('[data-act="del"]').onclick=async()=>{if(!confirm("Biztosan törlöd a szolgáltatást? A meglévő időpontok megmaradnak."))return;await deleteService(s.id)};wrap.appendChild(row)})}
+async function updateCustomer(c){const idx=state.customers.findIndex(x=>x.id===c.id);if(idx>-1)state.customers[idx]=c;await putBin(BINS.customers,state.customers);toast("Ügyfél mentve");renderCustomersManage();populateSelectors();renderAppointments()}
+async function deleteCustomer(id){state.customers=state.customers.filter(c=>c.id!==id);await putBin(BINS.customers,state.customers);toast("Ügyfél törölve");renderCustomersManage();populateSelectors();renderAppointments()}
+async function updateService(s){const idx=state.services.findIndex(x=>x.id===s.id);if(idx>-1)state.services[idx]=s;await putBin(BINS.services,state.services);toast("Szolgáltatás mentve");renderServicesManage();populateSelectors();renderAppointments()}
+async function deleteService(id){state.services=state.services.filter(s=>s.id!==id);await putBin(BINS.services,state.services);toast("Szolgáltatás törölve");renderServicesManage();populateSelectors();renderAppointments()}
+async function deleteBookingFlow(id){if(!confirm("Biztosan törlöd az időpontot?"))return;state.bookings=state.bookings.filter(b=>b.id!==id);await putBin(BINS.bookings,state.bookings);toast("Időpont törölve");ensureSets();renderCalendar();renderAppointments()}
+async function saveBookingFromForm(){const date=document.getElementById("bkDate").value;const time=document.getElementById("bkTime").value;const customerId=+document.getElementById("bkCustomer").value;const serviceId=+document.getElementById("bkService").value;const dt=new Date(date+"T"+time);if(state.editingBooking){const idx=state.bookings.findIndex(b=>b.id===state.editingBooking.id);if(idx>-1){state.bookings[idx]={...state.editingBooking,customerId,serviceId,date:dt.toISOString().slice(0,16)}}}else{state.bookings.push({id:makeId(),customerId,serviceId,date:dt.toISOString().slice(0,16)})}await putBin(BINS.bookings,state.bookings);toast("Időpont mentve");closeBookingModal();ensureSets();renderCalendar();renderAppointments()}
+async function quickAddCustomerFlow(){const name=prompt("Új ügyfél neve");if(!name)return;const phone=prompt("Telefon (opcionális)")||"";const obj={id:makeId(),name,phone};state.customers.push(obj);await putBin(BINS.customers,state.customers);toast("Ügyfél hozzáadva");populateSelectors();renderCustomersManage()}
+async function quickAddServiceFlow(){const name=prompt("Szolgáltatás megnevezése");if(!name)return;const price=prompt("Ár (HUF)")||"";const duration=parseInt(prompt("Időtartam (perc)")||"60",10);const obj={id:makeId(),name,price,duration:isNaN(duration)?60:duration};state.services.push(obj);await putBin(BINS.services,state.services);toast("Szolgáltatás hozzáadva");populateSelectors();renderServicesManage()}
+async function addCustomerLine(){const name=document.getElementById("custName").value.trim();const phone=document.getElementById("custPhone").value.trim();if(!name){toast("Adj meg nevet");return}const obj={id:makeId(),name,phone};state.customers.push(obj);await putBin(BINS.customers,state.customers);document.getElementById("custName").value="";document.getElementById("custPhone").value="";toast("Ügyfél hozzáadva");renderCustomersManage();populateSelectors()}
+async function addServiceLine(){const name=document.getElementById("srvName").value.trim();const price=document.getElementById("srvPrice").value.trim();const duration=parseInt(document.getElementById("srvDuration").value||"60",10);if(!name){toast("Adj meg megnevezést");return}const obj={id:makeId(),name,price,duration:isNaN(duration)?60:duration};state.services.push(obj);await putBin(BINS.services,state.services);document.getElementById("srvName").value="";document.getElementById("srvPrice").value="";document.getElementById("srvDuration").value="";toast("Szolgáltatás hozzáadva");renderServicesManage();populateSelectors()}
+async function loadInitial(){const [customers,services,bookings]=await Promise.all([fetchBin(BINS.customers),fetchBin(BINS.services),fetchBin(BINS.bookings)]);state.customers=customers||[];state.services=services||[];state.bookings=(bookings||[]).map(b=>({...b}));ensureSets()}
+document.getElementById("prevMonth").addEventListener("click",()=>{state.cursor=new Date(state.cursor.getFullYear(),state.cursor.getMonth()-1,1);renderCalendar()});
+document.getElementById("nextMonth").addEventListener("click",()=>{state.cursor=new Date(state.cursor.getFullYear(),state.cursor.getMonth()+1,1);renderCalendar()});
+document.getElementById("openNewBooking").addEventListener("click",()=>openBookingModal());
+document.getElementById("fabNew").addEventListener("click",()=>openBookingModal());
+document.getElementById("closeBooking").addEventListener("click",closeBookingModal);
+document.getElementById("cancelBooking").addEventListener("click",closeBookingModal);
+document.getElementById("bookingForm").addEventListener("submit",e=>{e.preventDefault();saveBookingFromForm()});
+document.getElementById("deleteBooking").addEventListener("click",async()=>{if(!state.editingBooking)return;await deleteBookingFlow(state.editingBooking.id);closeBookingModal()});
+document.getElementById("quickAddCustomer").addEventListener("click",quickAddCustomerFlow);
+document.getElementById("quickAddService").addEventListener("click",quickAddServiceFlow);
+document.getElementById("openCustomers").addEventListener("click",openCustomersModal);
+document.getElementById("closeCustomers").addEventListener("click",closeCustomersModal);
+document.getElementById("addCustomer").addEventListener("click",e=>{e.preventDefault();addCustomerLine()});
+document.getElementById("openServices").addEventListener("click",openServicesModal);
+document.getElementById("closeServices").addEventListener("click",closeServicesModal);
+document.getElementById("addService").addEventListener("click",e=>{e.preventDefault();addServiceLine()});
+(async function init(){await loadInitial();renderCalendar();renderAppointments();populateSelectors()})()
+</script>
+</body>
+</html>
