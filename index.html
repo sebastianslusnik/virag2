@@ -3,20 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#7c3aed">
+<meta name="theme-color" content="#0f0a1e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Foglaló">
 <title>Szépségszalon Időpontfoglaló</title>
 <link rel="preconnect" href="https://api.jsonbin.io">
 <style>
 :root{--bg:#0b0b12;--card:#141425;--muted:#8b8ba7;--text:#f6f6fb;--primary:#7c3aed;--primary-2:#a78bfa;--accent:#22d3ee;--danger:#ef4444;--ok:#22c55e;--ring:rgba(124,58,237,.4)}
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;background:radial-gradient(1200px 800px at 100% -10%,#1b1333 0,#0b0b12 50%),var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,"Apple Color Emoji","Segoe UI Emoji"}
-.container{max-width:-webkit-fill-available;margin:0 auto;padding:0px;display:flex;flex-direction:column;gap:12px}
+body{margin:0;height: 100vh;background:#0f0a1e;color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+.container{max-width:-webkit-fill-available;margin:0 auto;padding:0px;display:flex;flex-direction:column;height: 100vh;gap:12px}
 .header{display:flex;align-items:center;justify-content:space-between}
 .title{font-weight:700;letter-spacing:.3px;font-size:18px}
 .badge{font-size:12px;color:#c7c7df;background:#1f1f37;border:1px solid #2a2a48;padding:2px 8px;border-radius:999px}
 .panel{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0)) border-box;background-clip:padding-box;border:1px solid rgba(255,255,255,.08);border-radius:16px;backdrop-filter:blur(6px)}
-.split{height:100dvh;display:flex;flex-direction:column;gap:0px}
+.split{height:100vh;display:flex;flex-direction:column;gap:0px}
 .half{flex:1;min-height:0;max-height: fit-content}
 .calendar{height:100%;display:grid;grid-template-rows:auto 24px 1fr;gap:10px;padding:12px}
 .cal-head{display:flex;align-items:center;justify-content:space-between}
