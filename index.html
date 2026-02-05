@@ -11,13 +11,13 @@
 *{box-sizing:border-box}
 html,body{height:100%}
 body{margin:0;background:radial-gradient(1200px 800px at 100% -10%,#1b1333 0,#0b0b12 50%),var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,"Apple Color Emoji","Segoe UI Emoji"}
-.container{max-width:520px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.container{max-width:-webkit-fill-available;margin:0 auto;padding:0px;display:flex;flex-direction:column;gap:12px}
 .header{display:flex;align-items:center;justify-content:space-between}
 .title{font-weight:700;letter-spacing:.3px;font-size:18px}
 .badge{font-size:12px;color:#c7c7df;background:#1f1f37;border:1px solid #2a2a48;padding:2px 8px;border-radius:999px}
 .panel{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0)) border-box;background-clip:padding-box;border:1px solid rgba(255,255,255,.08);border-radius:16px;backdrop-filter:blur(6px)}
-.split{height:calc(100dvh - 88px);display:flex;flex-direction:column;gap:12px}
-.half{flex:1;min-height:0}
+.split{height:100dvh;display:flex;flex-direction:column;gap:0px}
+.half{flex:1;min-height:0;max-height: fit-content}
 .calendar{height:100%;display:grid;grid-template-rows:auto 24px 1fr;gap:10px;padding:12px}
 .cal-head{display:flex;align-items:center;justify-content:space-between}
 .cal-month{font-weight:700;font-size:16px}
@@ -25,15 +25,15 @@ body{margin:0;background:radial-gradient(1200px 800px at 100% -10%,#1b1333 0,#0b
 .icon-btn:active{transform:scale(.97)}
 .weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;color:var(--muted);font-size:11px;text-align:center}
 .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-content:start;overflow:auto}
-.day{position:relative;display:grid;place-items:center;height:44px;border-radius:12px;background:#121227;border:1px solid #1f1f3a;color:#e8e8ff;cursor:pointer;transition:.15s}
+.day{position:relative;display:grid;place-items:center;height:44px;border-radius:12px;background:#121227;border:1px solid #1f1f3a;color:#c9c9e6;cursor:pointer;transition:.15s}
 .day.muted{color:#747493;background:#0f0f1c;border-color:#17172e}
 .day:hover{border-color:#343467}
 .day.today{outline:2px solid var(--ring);outline-offset:0}
 .day.selected{background:linear-gradient(180deg,#231c44,#1a1440);border-color:#3b2d89;box-shadow:0 0 0 1px rgba(124,58,237,.3) inset}
 .dot{position:absolute;bottom:6px;width:6px;height:6px;border-radius:999px;background:var(--accent);opacity:.95}
-.bottom{height:100%;display:flex;flex-direction:column}
+.bottom{height:-webkit-fill-available;display:flex;flex-direction:column}
 .toolbar{display:flex;gap:8px;padding:10px;border-bottom:1px solid rgba(255,255,255,.08)}
-.tab{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:#15152a;border:1px solid #212145;border-radius:12px;padding:10px 12px;font-weight:600;color:#e8e8ff;cursor:pointer}
+.tab{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:#15152a;border:1px solid #212145;border-radius:12px;padding:10px 12px;font-weight:600;color:#c9c9e6;cursor:pointer}
 .tab.secondary{background:#101023;color:#c9c9e6}
 .list{padding:8px;overflow:auto;display:flex;flex-direction:column;gap:8px}
 .item{display:flex;align-items:center;gap:12px;padding:12px;background:#121227;border:1px solid #1f1f3a;border-radius:14px}
@@ -48,12 +48,12 @@ body{margin:0;background:radial-gradient(1200px 800px at 100% -10%,#1b1333 0,#0b
 .btn.icon{padding:10px 12px;border-radius:10px}
 .btn.ghost{background:#181833;border:1px solid #26264a;color:#e9e9ff;box-shadow:none}
 .btn.danger{background:linear-gradient(180deg,#ef4444,#b91c1c);box-shadow:0 8px 18px rgba(239,68,68,.35)}
-.fab{position:fixed;inset:auto 20px 20px auto;z-index:30}
+.fab{position:fixed;inset:auto 20px 20px auto;z-index:30;display:none;}
 .empty{padding:28px;text-align:center;color:#bdbde0}
 .badgelite{font-size:11px;color:#cfcfee}
 .modal{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(8,8,16,.5);backdrop-filter:blur(6px);z-index:40}
 .modal.show{display:flex}
-.sheet{width:100%;max-width:520px;border-top-left-radius:16px;border-top-right-radius:16px;background:#0f0f20;border:1px solid rgba(255,255,255,.08);padding:14px 14px 18px;max-height:86dvh;overflow:auto}
+.sheet{width:100%;max-width:-webkit-fill-available;border-top-left-radius:16px;border-top-right-radius:16px;background:#0f0f20;border:1px solid rgba(255,255,255,.08);padding:14px 14px 18px;max-height:86dvh;overflow:auto}
 .sheet h3{margin:6px 0 12px;font-size:18px}
 .form{display:flex;flex-direction:column;gap:10px}
 .row{display:flex;gap:10px}
@@ -76,10 +76,6 @@ hr.sep{border:0;border-top:1px solid rgba(255,255,255,.08);margin:8px 0}
 </head>
 <body>
 <div class="container">
-  <div class="header">
-    <div class="title">Szépségszalon időpontok</div>
-    <div class="badge">Mobil nézet</div>
-  </div>
   <div class="panel split">
     <div class="half">
       <div class="calendar">
@@ -102,7 +98,7 @@ hr.sep{border:0;border-top:1px solid rgba(255,255,255,.08);margin:8px 0}
       <div class="toolbar">
         <button class="tab" id="openNewBooking">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          Új időpont
+          Időpont
         </button>
         <button class="tab secondary" id="openCustomers">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM3 21a7 7 0 0114 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -116,13 +112,6 @@ hr.sep{border:0;border-top:1px solid rgba(255,255,255,.08);margin:8px 0}
       <div class="list" id="appointmentsList"></div>
     </div>
   </div>
-</div>
-
-<div class="fab">
-  <button class="btn" id="fabNew">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    Hozzáadás
-  </button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -204,7 +193,12 @@ hr.sep{border:0;border-top:1px solid rgba(255,255,255,.08);margin:8px 0}
     </div>
   </div>
 </div>
-
+<div class="fab">
+  <button class="btn" id="fabNew">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+    Hozzáadás
+  </button>
+</div>
 <script>
 const MASTER_KEY="$2a$10$LitFnKme7gkjI/1sQi1GZOqoCXWxUPTCLAKFCjRfR5WccGOzO/hx6";
 const ACCESS_KEY="$2a$10$kRkpn5Aju0/avKQUfbwtMe5Wd7XzzN5ub/C2Lt/f52MqLRm7jm/Yy";
