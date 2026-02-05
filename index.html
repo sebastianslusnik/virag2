@@ -48,7 +48,7 @@ body{overscroll-behavior: none;overflow: hidden;position: fixed;margin:0;height:
 .toolbar{display:flex;gap:8px;padding:10px;border-bottom:1px solid rgba(255,255,255,.08)}
 .tab{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:#15152a;border:1px solid #212145;border-radius:12px;padding:10px 12px;font-weight:600;color:#c9c9e6;cursor:pointer}
 .tab.secondary{background:#101023;color:#c9c9e6}
-.list{padding:8px;overflow:auto;display:flex;flex-direction:column;gap:8px}
+.list{padding:8px;overflow:auto;display:flex;flex-direction:column;gap:4px;overflow-y: auto !important; -webkit-overflow-scrolling: touch !important;}
 .item{display:flex;align-items:center;gap:12px;padding:12px;background:#121227;border:1px solid #1f1f3a;border-radius:14px}
 .time{min-width:64px;font-weight:800;letter-spacing:.3px}
 .tag{font-size:11px;color:#bfbfe3;background:#201f3e;border:1px solid #2b2a52;border-radius:999px;padding:2px 8px}
