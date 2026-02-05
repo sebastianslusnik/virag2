@@ -28,7 +28,7 @@ body{overscroll-behavior: none;overflow: hidden;position: fixed;margin:0;height:
 .header{display:flex;align-items:center;justify-content:space-between}
 .title{font-weight:700;letter-spacing:.3px;font-size:18px}
 .badge{font-size:12px;color:#c7c7df;background:#1f1f37;border:1px solid #2a2a48;padding:2px 8px;border-radius:999px}
-.panel{background:linear-gradient(0deg,rgba(255,255,255,.06),rgba(255,255,255,0)) border-box;background-clip:padding-box;border:none;border-radius:0px;backdrop-filter:blur(6px)}
+.panel{background-clip:padding-box;border:none;border-radius:0px;backdrop-filter:blur(6px)}
 .split{height:100vh;display:flex;flex-direction:column;gap:0px}
 .half{flex:1;min-height:0;max-height: fit-content}
 .calendar{height:100%;display:grid;grid-template-rows:auto 24px 1fr;gap:10px;padding:12px;}
@@ -66,7 +66,7 @@ body{overscroll-behavior: none;overflow: hidden;position: fixed;margin:0;height:
 .badgelite{font-size:11px;color:#cfcfee}
 .modal{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(8,8,16,.5);backdrop-filter:blur(6px);z-index:40}
 .modal.show{display:flex}
-.sheet{width:100%;max-width:-webkit-fill-available;border-top-left-radius:16px;border-top-right-radius:16px;background:#0f0f20;border:1px solid rgba(255,255,255,.08);padding:14px 14px 18px;max-height:86dvh;overflow:auto}
+.sheet{width:100%;max-width:-webkit-fill-available;border-top-left-radius:16px;border-top-right-radius:16px;background:#0f0f20;border:none;padding:14px 14px 18px;max-height:86dvh;overflow:auto}
 .sheet h3{margin:6px 0 12px;font-size:18px}
 .form{display:flex;flex-direction:column;gap:10px}
 .row{display:flex;gap:10px}
