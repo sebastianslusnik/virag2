@@ -21,9 +21,8 @@
 <style>
 :root{--bg:#0b0b12;--card:#141425;--muted:#8b8ba7;--text:#f6f6fb;--primary:#7c3aed;--primary-2:#a78bfa;--accent:#22d3ee;--danger:#ef4444;--ok:#22c55e;--ring:rgba(124,58,237,.4)}
 *{box-sizing:border-box}
-  html {filter:sepia(1)}
 html,body{height:100%;background:#0f0a1e;}
-body{overflow: hidden;position: fixed;margin:0;height: 100vh;width:100vw;background:#0f0a1e;color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+body{position: fixed;margin:0;height: 100vh;width:100vw;background:#0f0a1e;color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,"Apple Color Emoji","Segoe UI Emoji"}
 .container{max-width:-webkit-fill-available;margin:0 auto;padding:0px;display:flex;flex-direction:column;height:100vh;gap:12px}
 .header{display:flex;align-items:center;justify-content:space-between}
 .title{font-weight:700;letter-spacing:.3px;font-size:18px}
@@ -212,8 +211,9 @@ hr.sep{border:0;border-top:1px solid rgba(255,255,255,.08);margin:8px 0}
     Hozzáadás
   </button>
 </div>
+
 <script>
-  document.getElementById('monthLabel').addEventListener('click', () => { const target = document.getElementById('hiddened'); const current = getComputedStyle(target).flexGrow; if (current === "0.1") { target.style.flex = "1"; } else { target.style.flex = "0.1"; } });
+document.getElementById('monthLabel').addEventListener('click', () => { const target = document.getElementById('hiddened'); const current = getComputedStyle(target).flexGrow; if (current === "0.1") { target.style.flex = "1"; } else { target.style.flex = "0.1"; } });
 const MASTER_KEY="$2a$10$LitFnKme7gkjI/1sQi1GZOqoCXWxUPTCLAKFCjRfR5WccGOzO/hx6";
 const ACCESS_KEY="$2a$10$kRkpn5Aju0/avKQUfbwtMe5Wd7XzzN5ub/C2Lt/f52MqLRm7jm/Yy";
 const BINS={customers:"69844befae596e708f12c39b",services:"698449e9d0ea881f40a2541f",bookings:"698449d743b1c97be966e8ce"};
@@ -270,7 +270,38 @@ async function deleteCustomer(id){state.customers=state.customers.filter(c=>c.id
 async function updateService(s){const idx=state.services.findIndex(x=>x.id===s.id);if(idx>-1)state.services[idx]=s;await putBin(BINS.services,state.services);toast("Szolgáltatás mentve");renderServicesManage();populateSelectors();renderAppointments()}
 async function deleteService(id){state.services=state.services.filter(s=>s.id!==id);await putBin(BINS.services,state.services);toast("Szolgáltatás törölve");renderServicesManage();populateSelectors();renderAppointments()}
 async function deleteBookingFlow(id){if(!confirm("Biztosan törlöd az időpontot?"))return;state.bookings=state.bookings.filter(b=>b.id!==id);await putBin(BINS.bookings,state.bookings);toast("Időpont törölve");ensureSets();renderCalendar();renderAppointments()}
-async function saveBookingFromForm(){const date=document.getElementById("bkDate").value;const time=document.getElementById("bkTime").value;const customerId=+document.getElementById("bkCustomer").value;const serviceId=+document.getElementById("bkService").value;const dt=new Date(date+"T"+time);if(state.editingBooking){const idx=state.bookings.findIndex(b=>b.id===state.editingBooking.id);if(idx>-1){state.bookings[idx]={...state.editingBooking,customerId,serviceId,date:dt.toISOString().slice(0,16)}}}else{state.bookings.push({id:makeId(),customerId,serviceId,date:dt.toISOString().slice(0,16)})}await putBin(BINS.bookings,state.bookings);toast("Időpont mentve");closeBookingModal();ensureSets();renderCalendar();renderAppointments()}
+async function saveBookingFromForm(){const date=document.getElementById("bkDate").value;const time=document.getElementById("bkTime").value;const customerId=+document.getElementById("bkCustomer").value;const serviceId=+document.getElementById("bkService").value;
+
+const [Y, M, D] = date.split("-").map(Number);
+const [hh, mm] = time.split(":").map(Number);
+
+const dt = `${Y}-${pad(M)}-${pad(D)}T${pad(hh)}:${pad(mm)}`;
+
+if (state.editingBooking) {
+    const idx = state.bookings.findIndex(b => b.id === state.editingBooking.id);
+    if (idx > -1) {
+        state.bookings[idx] = {
+            ...state.editingBooking,
+            customerId,
+            serviceId,
+            date: dt
+        };
+    }
+} else {
+    state.bookings.push({
+        id: makeId(),
+        customerId,
+        serviceId,
+        date: dt
+    });
+}
+await putBin(BINS.bookings, state.bookings);
+toast("Időpont mentve");
+closeBookingModal();
+ensureSets();
+renderCalendar();
+renderAppointments();
+}
 async function quickAddCustomerFlow(){const name=prompt("Új ügyfél neve");if(!name)return;const phone=prompt("Telefon (opcionális)")||"";const obj={id:makeId(),name,phone};state.customers.push(obj);await putBin(BINS.customers,state.customers);toast("Ügyfél hozzáadva");populateSelectors();renderCustomersManage()}
 async function quickAddServiceFlow(){const name=prompt("Szolgáltatás megnevezése");if(!name)return;const price=prompt("Ár (HUF)")||"";const duration=parseInt(prompt("Időtartam (perc)")||"60",10);const obj={id:makeId(),name,price,duration:isNaN(duration)?60:duration};state.services.push(obj);await putBin(BINS.services,state.services);toast("Szolgáltatás hozzáadva");populateSelectors();renderServicesManage()}
 async function addCustomerLine(){const name=document.getElementById("custName").value.trim();const phone=document.getElementById("custPhone").value.trim();if(!name){toast("Adj meg nevet");return}const obj={id:makeId(),name,phone};state.customers.push(obj);await putBin(BINS.customers,state.customers);document.getElementById("custName").value="";document.getElementById("custPhone").value="";toast("Ügyfél hozzáadva");renderCustomersManage();populateSelectors()}
@@ -292,7 +323,8 @@ document.getElementById("addCustomer").addEventListener("click",e=>{e.preventDef
 document.getElementById("openServices").addEventListener("click",openServicesModal);
 document.getElementById("closeServices").addEventListener("click",closeServicesModal);
 document.getElementById("addService").addEventListener("click",e=>{e.preventDefault();addServiceLine()});
-(async function init(){await loadInitial();renderCalendar();renderAppointments();populateSelectors()})()
+(async function init(){await loadInitial();renderCalendar();renderAppointments();populateSelectors()})();
 </script>
+  
 </body>
 </html>
