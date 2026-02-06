@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#13110d">
+<meta name="theme-color" content="#F3E9DC">
   <link rel="icon" type="image/png" href="logo.png">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Foglaló">
@@ -125,8 +125,8 @@ body{
 .icon-btn{
   display:inline-grid;
   place-items:center;
-  width:34px;
-  height:34px;
+  width:40px;
+  height:40px;
   border-radius:10px;
   background:var(--c3);
   border: none;
@@ -306,9 +306,10 @@ body{
   color:white;
   border:0;
   border-radius:12px;
-  padding:12px 14px;
+  padding:12px;
   font-weight:700;
   cursor:pointer;
+  height: 44px;
 }
 
 .btn:active{
@@ -377,14 +378,15 @@ body{
 }
 
 .sheet h3{
-  margin:6px 0 12px;
-  font-size:18px;
+  margin: 12px 0 12px;
+  font-size: 22px;
 }
 
 .form{
   display:flex;
   flex-direction:column;
-  gap:10px;
+  gap:16px;
+  margin-top: 20px;
 }
 
 .row{
@@ -393,24 +395,27 @@ body{
 }
 
 .input,select{
-  width:100%;
-  padding:12px 12px;
-  background:var(--c1);
-  border:1px solid var(--c4);
+  width: -webkit-fill-available;
+  padding: 12px;
+  background: var(--c7);
+  border:1px solid var(--c3);
   border-radius:12px;
   color:var(--c3);
   outline:none;
+  height: 44px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
 
 .input:focus,select:focus{
-  border-color:var(--c2);
-  box-shadow:0 0 0 4px rgba(192,133,82,.2);
+  border: 2px solid var(--c3);
 }
 
 .label{
-  font-size:12px;
+  font-size:14px;
   color:var(--c3);
-  margin-bottom:4px;
+  margin-bottom:5px;
 }
 
 .inline{
@@ -486,16 +491,17 @@ hr.sep{
 }
 
 .smallbtn{
-  padding:8px 10px;
-  border-radius:10px;
-  background:var(--c1);
-  border:1px solid var(--c4);
-  color:var(--c3);
-  cursor:pointer;
+  background: var(--c1);
+    border: none;
+    color: var(--c3);
+    cursor: pointer;
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 0;
 }
 
 .stats{
-  display:flex;
+  display:none;
   gap:8px;
   flex-wrap:wrap;
 }
@@ -508,6 +514,19 @@ hr.sep{
   color:var(--c3);
   font-size:12px;
 }
+  #deleteBooking,
+  #cancelBooking {
+    display: none !important;
+  }
+  #saveBooking {
+    width: -webkit-fill-available;
+    background: var(--c3);
+    color: var(--c1);
+    margin-top: 10px;
+    margin-bottom: 14px;
+    font-size: 16px;
+    height: 50px;
+  }
 
 @media(min-width:700px){
   .container{
@@ -563,8 +582,7 @@ hr.sep{
     <div style="display:flex;align-items:center;justify-content:space-between">
       <h3 id="bookingTitle">Új időpont</h3>
       <div class="inline">
-        <span class="kbd">JSONBin</span>
-        <button class="smallbtn" id="closeBooking">Bezárás</button>
+        <button class="smallbtn" id="closeBooking">&times;</button>
       </div>
     </div>
     <div class="stats" id="bookingStats"></div>
@@ -582,14 +600,14 @@ hr.sep{
         <div class="label">Ügyfél</div>
         <div class="row">
           <select id="bkCustomer" required></select>
-          <button type="button" class="btn ghost" id="quickAddCustomer">Új</button>
+          <button type="button" class="btn danger" id="quickAddCustomer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path></svg></button>
         </div>
       </div>
       <div>
         <div class="label">Szolgáltatás</div>
         <div class="row">
           <select id="bkService" required></select>
-          <button type="button" class="btn ghost" id="quickAddService">Új</button>
+          <button type="button" class="btn danger" id="quickAddService"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path></svg></button>
         </div>
       </div>
       <div class="row">
