@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -19,71 +20,500 @@
 <title>Időpontfoglaló</title>
 <link rel="preconnect" href="https://api.jsonbin.io">
 <style>
-:root{--bg:#0b0b12;--card:#141425;--muted:#8b8ba7;--text:#f6f6fb;--primary:#7c3aed;--primary-2:#a78bfa;--accent:#22d3ee;--danger:#ef4444;--ok:#22c55e;--ring:rgba(124,58,237,.4)}
-*{box-sizing:border-box}
-html,body{height:100%;background:#0f0a1e;}
-body{position: fixed;margin:0;height: 100vh;width:100vw;background:#0f0a1e;color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,"Apple Color Emoji","Segoe UI Emoji"}
-.container{max-width:-webkit-fill-available;margin:0 auto;padding:0px;display:flex;flex-direction:column;height:100vh;gap:12px}
-.header{display:flex;align-items:center;justify-content:space-between}
-.title{font-weight:700;letter-spacing:.3px;font-size:18px}
-.badge{font-size:12px;color:#c7c7df;background:#1f1f37;border:1px solid #2a2a48;padding:2px 8px;border-radius:999px}
-.panel{background-clip:padding-box;border:none;border-radius:0px;backdrop-filter:blur(6px)}
-.split{height:100vh;display:flex;flex-direction:column;gap:0px}
-.half{flex:1;min-height:0;max-height: fit-content;transition: flex 0.3s ease;}
-.calendar{height:100%;display:grid;grid-template-rows:auto 24px 1fr;gap:10px;padding:12px;}
-.cal-head{display:flex;align-items:center;justify-content:space-between}
-.cal-month{font-weight:700;font-size:16px}
-.icon-btn{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#1a1a2d;border:1px solid #252545;color:#d9d9f4;cursor:pointer;transition:.15s}
-.icon-btn:active{transform:scale(.97)}
-.weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;color:var(--muted);font-size:11px;text-align:center}
-.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;align-content:start;overflow:auto}
-.day{position:relative;display:grid;place-items:center;height:44px;border-radius:12px;background:#121227;border:1px solid #1f1f3a;color:#c9c9e6;cursor:pointer;transition:.15s}
-.day.muted{color:#747493;background:#0f0f1c;border-color:#17172e}
-.day:hover{border-color:#343467}
-.day.today{outline:2px solid var(--ring);outline-offset:0}
-.day.selected{background:linear-gradient(180deg,#231c44,#1a1440);border-color:#3b2d89;box-shadow:0 0 0 1px rgba(124,58,237,.3) inset}
-.dot{position:absolute;bottom:6px;width:6px;height:6px;border-radius:999px;background:var(--accent);opacity:.95}
-.bottom{height:-webkit-fill-available;display:flex;flex-direction:column}
-.toolbar{display:flex;gap:8px;padding:10px;border-bottom:1px solid rgba(255,255,255,.08)}
-.tab{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:#15152a;border:1px solid #212145;border-radius:12px;padding:10px 12px;font-weight:600;color:#c9c9e6;cursor:pointer}
-.tab.secondary{background:#101023;color:#c9c9e6}
-.list{padding:8px;overflow:auto;display:flex;flex-direction:column;gap:4px;overflow-y: auto !important; -webkit-overflow-scrolling: touch !important;}
-.item{display:flex;align-items:center;gap:12px;padding:12px;background:#121227;border:1px solid #1f1f3a;border-radius:14px}
-.time{min-width:64px;font-weight:800;letter-spacing:.3px}
-.tag{font-size:11px;color:#bfbfe3;background:#201f3e;border:1px solid #2b2a52;border-radius:999px;padding:2px 8px}
-.meta{flex:1;min-width:0}
-.meta .name{font-weight:700}
-.meta .srv{color:#c9c9e6;font-size:12px}
-.actions{display:flex;gap:6px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(180deg,#7c3aed,#6d28d9);color:white;border:0;border-radius:12px;padding:12px 14px;font-weight:700;cursor:pointer;box-shadow:0 8px 18px rgba(124,58,237,.35)}
-.btn:active{transform:translateY(1px)}
-.btn.icon{padding:10px 12px;border-radius:10px}
-.btn.ghost{background:#181833;border:1px solid #26264a;color:#e9e9ff;box-shadow:none}
-.btn.danger{background:linear-gradient(180deg,#ef4444,#b91c1c);box-shadow:0 8px 18px rgba(239,68,68,.35)}
-.fab{position:fixed;inset:auto 20px 20px auto;z-index:30;display:none;}
-.empty{padding:28px;text-align:center;color:#bdbde0}
-.badgelite{font-size:11px;color:#cfcfee}
-.modal{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(8,8,16,.5);backdrop-filter:blur(6px);z-index:40}
-.modal.show{display:flex}
-.sheet{width:100%;max-width:-webkit-fill-available;border-top-left-radius:16px;border-top-right-radius:16px;background:#0f0f20;border:none;padding:14px 14px 18px;max-height:86dvh;overflow:auto}
-.sheet h3{margin:6px 0 12px;font-size:18px}
-.form{display:flex;flex-direction:column;gap:10px}
-.row{display:flex;gap:10px}
-.input,select{width:100%;padding:12px 12px;background:#121227;border:1px solid #242448;border-radius:12px;color:#f4f4ff;outline:none}
-.input:focus,select:focus{border-color:#3a2d88;box-shadow:0 0 0 4px rgba(124,58,237,.15)}
-.label{font-size:12px;color:#c9c9e6;margin-bottom:4px}
-.inline{display:flex;align-items:center;gap:8px}
-.list-manage{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-.manage-item{display:flex;align-items:center;gap:10px;background:#121227;border:1px solid #1f1f3a;border-radius:12px;padding:10px}
-.small{font-size:12px;color:#bfbfe3}
-.kbd{font-size:11px;padding:2px 6px;border-radius:6px;border:1px dashed #35355f;color:#bdbde9}
-.status{display:inline-flex;align-items:center;gap:8px;font-size:12px;padding:8px 10px;border-radius:10px;border:1px solid #234; background:#0e1420;color:#cfe}
-.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);padding:10px 14px;border-radius:12px;background:#121227;border:1px solid #1f1f3a;color:#d7f3ff;display:none;z-index:50}
-.toast.show{display:block}
-hr.sep{border:0;border-top:1px solid rgba(255,255,255,.08);margin:8px 0}
-.smallbtn{padding:8px 10px;border-radius:10px;background:#181833;border:1px solid #26264a;color:#e9e9ff;cursor:pointer}
-.stats{display:flex;gap:8px;flex-wrap:wrap}
-.pill{background:#15152a;border:1px dashed #2a2a4d;padding:6px 10px;border-radius:999px;color:#c9c9e6;font-size:12px}
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
+:root{
+  --c1:#F3E9DC;
+  --c2:#C08552;
+  --c3:#5E3023;
+  --c4:#895737;
+  --c5:#d7c1a4;
+  --c6:#cdad99;
+  --c7:#e9ddcc;
+}
+
+*{
+  box-sizing:border-box;
+  font-family: "Merriweather", serif !important;
+  }
+
+html,body{
+  height:100%;
+  background:var(--c1);
+}
+
+body{
+  position:fixed;
+  margin:0;
+  height:100vh;
+  width:100vw;
+  background:var(--c1);
+  color:var(--c3);
+  font-family: "Merriweather", serif !important;
+}
+
+.container{
+  max-width:-webkit-fill-available;
+  margin:0 auto;
+  padding:0px;
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+  gap:12px;
+}
+
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.title{
+  font-weight:700;
+  letter-spacing:.3px;
+  font-size:18px;
+}
+
+.badge{
+  font-size:12px;
+  color:var(--c3);
+  background:var(--c2);
+  border:1px solid var(--c4);
+  padding:2px 8px;
+  border-radius:999px;
+}
+
+.panel{
+  background-clip:padding-box;
+  border:none;
+  border-radius:0px;
+  backdrop-filter:blur(6px);
+}
+
+.split{
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  gap:0px;
+}
+
+.half{
+  flex:1;
+  min-height:0;
+  max-height:fit-content;
+  transition:flex 0.3s ease;
+}
+
+.calendar{
+  height:100%;
+  display:grid;
+  grid-template-rows:auto 24px 1fr;
+  gap:10px;
+  padding:12px;
+}
+
+.cal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.cal-month{
+  font-weight:900;
+  font-size:18px;
+}
+
+.icon-btn{
+  display:inline-grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  background:var(--c3);
+  border: none;
+  color:var(--c1);
+  cursor:pointer;
+  transition:.15s;
+}
+
+.icon-btn:active{
+  transform:scale(.97);
+}
+
+.weekdays{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:4px;
+  color:var(--c3);
+  font-size:12px;
+  text-align:center;
+  font-weight: 900
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:3px;
+  align-content:start;
+  overflow:auto;
+}
+
+.day{
+  position:relative;
+  display:grid;
+  place-items:center;
+  height:44px;
+  border-radius:12px;
+  background:var(--c5);
+  border: none;
+  color:var(--c3);
+  cursor:pointer;
+  transition:.15s;
+  font-weight: 600
+}
+
+.day.muted{
+  color:var(--c6);
+  background:var(--c1);
+  border-color:var(--c4);
+}
+
+.day:hover{
+  border-color:var(--c2);
+}
+
+.day.today{
+  outline:2px solid var(--c3);
+  outline-offset: -1px;
+}
+
+.day.selected{
+  background:var(--c3);
+  border-color:var(--c3);
+  color:var(--c1);
+}
+
+.day.selected > .dot{
+  background:var(--c1);
+}{
+  background:var(--c3);
+  border-color:var(--c3);
+  color:var(--c1);
+}
+
+.dot{
+  position:absolute;
+  bottom:6px;
+  width:6px;
+  height:6px;
+  border-radius:999px;
+  background:var(--c3);
+  opacity:.95;
+}
+
+.bottom{
+  height:-webkit-fill-available;
+  display:flex;
+  flex-direction:column;
+}
+
+.toolbar{
+  display:flex;
+  gap:8px;
+  padding:10px;
+  border-bottom:1px solid var(--c5);
+}
+
+.tab{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  background:var(--c3);
+  border: none;
+  border-radius:12px;
+  padding:10px 12px;
+  font-weight:700;
+  color:var(--c1);
+  cursor:pointer;
+}
+
+.tab.secondary{
+  background:var(--c5);
+  color:var(--c3);
+}
+
+.list{
+  padding:8px;
+  overflow:auto;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  overflow-y:auto !important;
+  -webkit-overflow-scrolling:touch !important;
+}
+
+.item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 10px 10px 20px;
+  background:var(--c7);
+  border:none;
+  border-radius:14px;
+}
+
+.time{
+  min-width:64px;
+  font-weight:800;
+  letter-spacing:.3px;
+}
+
+.tag{
+  font-size:11px;
+  color:var(--c3);
+  background:var(--c2);
+  border:1px solid var(--c4);
+  border-radius:999px;
+  padding:2px 8px;
+}
+
+.meta{
+  flex:1;
+  min-width:0;
+}
+
+.meta .name{
+  font-weight:700;
+}
+
+.meta .srv{
+  color:var(--c3);
+  font-size:12px;
+}
+
+.actions{
+  display:flex;
+  gap:6px;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  background:var(--c2);
+  color:white;
+  border:0;
+  border-radius:12px;
+  padding:12px 14px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.btn:active{
+  transform:translateY(1px);
+}
+
+.btn.icon{
+  padding:10px 12px;
+  border-radius:10px;
+}
+
+.btn.ghost{
+  background:var(--c7);
+  border:1px solid var(--c3);
+  color:var(--c3);
+}
+
+.btn.danger{
+  background:var(--c3);
+  color:var(--c1);
+}
+
+.fab{
+  position:fixed;
+  inset:auto 20px 20px auto;
+  z-index:30;
+  display:none;
+}
+
+.empty{
+  padding:28px;
+  text-align:center;
+  color:var(--c4);
+}
+
+.badgelite{
+  font-size:11px;
+  color:var(--c4);
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  background:rgba(0,0,0,.3);
+  backdrop-filter:blur(6px);
+  z-index:40;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.sheet{
+  width:100%;
+  max-width:-webkit-fill-available;
+  border-top-left-radius:16px;
+  border-top-right-radius:16px;
+  background:var(--c1);
+  border:none;
+  padding:14px 14px 18px;
+  max-height:86dvh;
+  overflow:auto;
+}
+
+.sheet h3{
+  margin:6px 0 12px;
+  font-size:18px;
+}
+
+.form{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.row{
+  display:flex;
+  gap:10px;
+}
+
+.input,select{
+  width:100%;
+  padding:12px 12px;
+  background:var(--c1);
+  border:1px solid var(--c4);
+  border-radius:12px;
+  color:var(--c3);
+  outline:none;
+}
+
+.input:focus,select:focus{
+  border-color:var(--c2);
+  box-shadow:0 0 0 4px rgba(192,133,82,.2);
+}
+
+.label{
+  font-size:12px;
+  color:var(--c3);
+  margin-bottom:4px;
+}
+
+.inline{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.list-manage{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-top:8px;
+}
+
+.manage-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:var(--c1);
+  border:1px solid var(--c4);
+  border-radius:12px;
+  padding:10px;
+}
+
+.small{
+  font-size:12px;
+  color:var(--c4);
+}
+
+.kbd{
+  font-size:11px;
+  padding:2px 6px;
+  border-radius:6px;
+  border:1px dashed var(--c4);
+  color:var(--c3);
+}
+
+.status{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid var(--c4);
+  background:var(--c1);
+  color:var(--c3);
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:90px;
+  transform:translateX(-50%);
+  padding:10px 14px;
+  border-radius:12px;
+  background:var(--c1);
+  border:1px solid var(--c4);
+  color:var(--c3);
+  display:none;
+  z-index:50;
+}
+
+.toast.show{
+  display:block;
+}
+
+hr.sep{
+  border:0;
+  border-top:1px solid var(--c4);
+  margin:8px 0;
+}
+
+.smallbtn{
+  padding:8px 10px;
+  border-radius:10px;
+  background:var(--c1);
+  border:1px solid var(--c4);
+  color:var(--c3);
+  cursor:pointer;
+}
+
+.stats{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.pill{
+  background:var(--c1);
+  border:1px dashed var(--c4);
+  padding:6px 10px;
+  border-radius:999px;
+  color:var(--c3);
+  font-size:12px;
+}
+
+@media(min-width:700px){
+  .container{
+    width:500px;
+  }
+}
 </style>
 </head>
 <body>
@@ -93,15 +523,15 @@ hr.sep{border:0;border-top:1px solid rgba(255,255,255,.08);margin:8px 0}
       <div class="calendar">
         <div class="cal-head">
           <button class="icon-btn" id="prevMonth" aria-label="Előző hónap">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
           <div class="cal-month" id="monthLabel"></div>
           <button class="icon-btn" id="nextMonth" aria-label="Következő hónap">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
         <div class="weekdays">
-          <div>H</div><div>K</div><div>Sze</div><div>Cs</div><div>P</div><div>Szo</div><div>V</div>
+          <div>Hét</div><div>Ked</div><div>Sze</div><div>Csü</div><div>Pén</div><div>Szo</div><div>Vas</div>
         </div>
         <div class="grid" id="calendarGrid"></div>
       </div>
@@ -109,15 +539,15 @@ hr.sep{border:0;border-top:1px solid rgba(255,255,255,.08);margin:8px 0}
     <div class="half bottom">
       <div class="toolbar">
         <button class="tab" id="openNewBooking">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
           Időpont
         </button>
         <button class="tab secondary" id="openCustomers">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM3 21a7 7 0 0114 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM3 21a7 7 0 0114 0" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
           Ügyfelek
         </button>
         <button class="tab secondary" id="openServices">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
           Szolgáltatások
         </button>
       </div>
@@ -246,7 +676,14 @@ items.forEach(b=>{const c=resolveCustomer(b.customerId),s=resolveService(b.servi
 </div>
 <div class="actions">
   <button class="btn icon ghost" data-act="edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-  <button class="btn icon danger" data-act="del"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M8 6v14h8V6M10 6V4h4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  <button class="btn icon danger" data-act="del"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M3 6h18" />
+  <path d="M10 6l1-2h2l1 2" />
+  <rect x="6" y="6" width="12" height="14" rx="2" />
+  <line x1="10" y1="10" x2="10" y2="18" />
+  <line x1="14" y1="10" x2="14" y2="18" />
+</svg></button>
 </div>`;row.querySelector('[data-act="edit"]').onclick=()=>openBookingModal(b);row.querySelector('[data-act="del"]').onclick=()=>deleteBookingFlow(b.id);list.appendChild(row)})}
 function populateSelectors(){const custSel=document.getElementById("bkCustomer");custSel.innerHTML="";state.customers.sort((a,b)=>a.name.localeCompare(b.name,'hu')).forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent=`${c.name} ${c.phone?"• "+c.phone:""}`;custSel.appendChild(o)});const srvSel=document.getElementById("bkService");srvSel.innerHTML="";state.services.sort((a,b)=>a.name.localeCompare(b.name,'hu')).forEach(s=>{const o=document.createElement("option");o.value=s.id;o.textContent=`${s.name}${s.duration?" • "+s.duration+"p":""}${s.price?" • "+new Intl.NumberFormat("hu-HU").format(+s.price)+" Ft":""}`;srvSel.appendChild(o)})}
 function openBookingModal(b){const modal=document.getElementById("bookingModal");populateSelectors();state.editingBooking=b?{...b}:null;document.getElementById("bookingTitle").textContent=b?"Időpont szerkesztése":"Új időpont";const d=b?new Date(b.date):state.selected;document.getElementById("bkDate").value=ymd(d);document.getElementById("bkTime").value=hm(d);if(b){document.getElementById("bkCustomer").value=b.customerId;document.getElementById("bkService").value=b.serviceId}document.getElementById("deleteBooking").style.display=b?"inline-flex":"none";const stats=document.getElementById("bookingStats");const cntDay=state.bookings.filter(x=>ymd(new Date(x.date))===ymd(d)).length;stats.innerHTML=`<span class="pill">Kiválasztott nap: ${ymd(d)}</span><span class="pill">Foglalások: ${cntDay} db</span>`;modal.classList.add("show")}
