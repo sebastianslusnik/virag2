@@ -542,8 +542,7 @@ hr.sep{
   #cancelBooking {
     display: none !important;
   }
-  #saveBooking,
-  #addCustomer {
+  #saveBooking {
     width: -webkit-fill-available;
     background: var(--c3);
     color: var(--c1);
@@ -551,11 +550,8 @@ hr.sep{
     margin-bottom: 14px;
     font-size: 16px;
     height: 50px;
-  }
-  #addCustomer {
-    margin-top: -10px;
-    margin-bottom: 20px;
-  }
+  } 
+  #addCustomer,
   #addService {
     margin-bottom: 20px;
     width: -webkit-fill-available;
@@ -661,11 +657,14 @@ hr.sep{
       <button class="smallbtn" id="closeCustomers">&times;</button>
     </div>
     <div class="form" style="">
-      <div class="row">
-        <input class="input" id="custName" placeholder="Név">
-        <input class="input" id="custPhone" placeholder="Telefon">
-      </div>
-      <div class="row" style="border-bottom: 1px solid var(--c3)">
+      
+<div class="row">
+  <input class="input" id="custName" placeholder="Név">
+  <input class="input" id="custPhone" placeholder="Telefon">
+</div>
+
+      <div class="row" style="border-bottom: 1px solid var(--c3);margin-top:-10px;">
+  <input class="input" id="custEmail" placeholder="Email">
         <button class="btn" id="addCustomer">Hozzáadás</button>
       </div>
       <div class="list-manage" id="customersList"></div>
@@ -729,7 +728,7 @@ function renderAppointments(){const list=document.getElementById("appointmentsLi
 items.forEach(b=>{const c=resolveCustomer(b.customerId),s=resolveService(b.serviceId);const d=new Date(b.date);const row=document.createElement("div");row.className="item";const price=s&&s.price?new Intl.NumberFormat("hu-HU").format(+s.price)+" Ft":"";row.innerHTML=`<div class="time">${hm(d)}</div>
 <div class="meta">
   <div class="name">${c?c.name:"Ismeretlen ügyfél"}</div>
-  <div class="srv">${s?s.name:"Ismeretlen szolgáltatás"} ${price?`• ${price}`:""}</div>
+  <div class="srv">${s?s.name:"Ismeretlen szolgáltatás"}${s && s.duration ? ` • ${s.duration}p` : ""}${price?` • ${price}`:""}</div>
 </div>
 <div class="actions">
   <button class="btn icon ghost" data-act="edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
@@ -741,14 +740,14 @@ items.forEach(b=>{const c=resolveCustomer(b.customerId),s=resolveService(b.servi
   <line x1="14" y1="10" x2="14" y2="18"></line>
 </svg></button>
 </div>`;row.querySelector('[data-act="edit"]').onclick=()=>openBookingModal(b);row.querySelector('[data-act="del"]').onclick=()=>deleteBookingFlow(b.id);list.appendChild(row)})}
-function populateSelectors(){const custSel=document.getElementById("bkCustomer");custSel.innerHTML="";state.customers.sort((a,b)=>a.name.localeCompare(b.name,'hu')).forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent=`${c.name} ${c.phone?"• "+c.phone:""}`;custSel.appendChild(o)});const srvSel=document.getElementById("bkService");srvSel.innerHTML="";state.services.sort((a,b)=>a.name.localeCompare(b.name,'hu')).forEach(s=>{const o=document.createElement("option");o.value=s.id;o.textContent=`${s.name}${s.duration?" • "+s.duration+"p":""}${s.price?" • "+new Intl.NumberFormat("hu-HU").format(+s.price)+" Ft":""}`;srvSel.appendChild(o)})}
+function populateSelectors(){const custSel=document.getElementById("bkCustomer");custSel.innerHTML="";state.customers.sort((a,b)=>a.name.localeCompare(b.name,'hu')).forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent = `${c.name}${c.phone?" • "+c.phone:""}${c.email?" • "+c.email:""}`;custSel.appendChild(o)});const srvSel=document.getElementById("bkService");srvSel.innerHTML="";state.services.sort((a,b)=>a.name.localeCompare(b.name,'hu')).forEach(s=>{const o=document.createElement("option");o.value=s.id;o.textContent=`${s.name}${s.duration?" • "+s.duration+"p":""}${s.price?" • "+new Intl.NumberFormat("hu-HU").format(+s.price)+" Ft":""}`;srvSel.appendChild(o)})}
 function openBookingModal(b){const modal=document.getElementById("bookingModal");populateSelectors();state.editingBooking=b?{...b}:null;document.getElementById("bookingTitle").textContent=b?"Időpont szerkesztése":"Új időpont";const d=b?new Date(b.date):state.selected;document.getElementById("bkDate").value=ymd(d);document.getElementById("bkTime").value=hm(d);if(b){document.getElementById("bkCustomer").value=b.customerId;document.getElementById("bkService").value=b.serviceId}document.getElementById("deleteBooking").style.display=b?"inline-flex":"none";const stats=document.getElementById("bookingStats");const cntDay=state.bookings.filter(x=>ymd(new Date(x.date))===ymd(d)).length;stats.innerHTML=`<span class="pill">Kiválasztott nap: ${ymd(d)}</span><span class="pill">Foglalások: ${cntDay} db</span>`;modal.classList.add("show")}
 function closeBookingModal(){document.getElementById("bookingModal").classList.remove("show")}
 function openCustomersModal(){const modal=document.getElementById("customersModal");renderCustomersManage();modal.classList.add("show")}
 function closeCustomersModal(){document.getElementById("customersModal").classList.remove("show")}
 function openServicesModal(){const modal=document.getElementById("servicesModal");renderServicesManage();modal.classList.add("show")}
 function closeServicesModal(){document.getElementById("servicesModal").classList.remove("show")}
-function renderCustomersManage(){const wrap=document.getElementById("customersList");wrap.innerHTML="";state.customers.sort((a,b)=>a.name.localeCompare(b.name,'hu')).forEach(c=>{const row=document.createElement("div");row.className="manage-item";row.innerHTML=`<div style="flex:1"><div style="font-weight:700">${c.name}</div><div class="small">${c.phone||""}</div></div>
+function renderCustomersManage(){const wrap=document.getElementById("customersList");wrap.innerHTML="";state.customers.sort((a,b)=>a.name.localeCompare(b.name,'hu')).forEach(c=>{const row=document.createElement("div");row.className="manage-item";row.innerHTML=`<div style="flex:1"><div style="font-weight:700">${c.name}</div><div class="small">${c.phone||""}</div><div class="small">${c.email || ""}</div></div>
 <div class="actions">
   <button class="btn icon ghost" data-act="edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
   <button class="btn icon danger" data-act="del"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -809,7 +808,7 @@ renderAppointments();
 }
 async function quickAddCustomerFlow(){const name=prompt("Új ügyfél neve");if(!name)return;const phone=prompt("Telefon (opcionális)")||"";const obj={id:makeId(),name,phone};state.customers.push(obj);await putBin(BINS.customers,state.customers);toast("Ügyfél hozzáadva");populateSelectors();renderCustomersManage()}
 async function quickAddServiceFlow(){const name=prompt("Szolgáltatás megnevezése");if(!name)return;const price=prompt("Ár (HUF)")||"";const duration=parseInt(prompt("Időtartam (perc)")||"60",10);const obj={id:makeId(),name,price,duration:isNaN(duration)?60:duration};state.services.push(obj);await putBin(BINS.services,state.services);toast("Szolgáltatás hozzáadva");populateSelectors();renderServicesManage()}
-async function addCustomerLine(){const name=document.getElementById("custName").value.trim();const phone=document.getElementById("custPhone").value.trim();if(!name){toast("Adj meg nevet");return}const obj={id:makeId(),name,phone};state.customers.push(obj);await putBin(BINS.customers,state.customers);document.getElementById("custName").value="";document.getElementById("custPhone").value="";toast("Ügyfél hozzáadva");renderCustomersManage();populateSelectors()}
+async function addCustomerLine(){const name=document.getElementById("custName").value.trim();const phone=document.getElementById("custPhone").value.trim();const email=document.getElementById("custEmail").value.trim();if(!name){toast("Adj meg nevet");return}const obj={id:makeId(),name,phone,email};state.customers.push(obj);await putBin(BINS.customers,state.customers);document.getElementById("custName").value="";document.getElementById("custPhone").value="";document.getElementById("custEmail").value="";toast("Ügyfél hozzáadva");renderCustomersManage();populateSelectors()}
 async function addServiceLine(){const name=document.getElementById("srvName").value.trim();const price=document.getElementById("srvPrice").value.trim();const duration=parseInt(document.getElementById("srvDuration").value||"60",10);if(!name){toast("Adj meg megnevezést");return}const obj={id:makeId(),name,price,duration:isNaN(duration)?60:duration};state.services.push(obj);await putBin(BINS.services,state.services);document.getElementById("srvName").value="";document.getElementById("srvPrice").value="";document.getElementById("srvDuration").value="";toast("Szolgáltatás hozzáadva");renderServicesManage();populateSelectors()}
 async function loadInitial(){const [customers,services,bookings]=await Promise.all([fetchBin(BINS.customers),fetchBin(BINS.services),fetchBin(BINS.bookings)]);state.customers=customers||[];state.services=services||[];state.bookings=(bookings||[]).map(b=>({...b}));ensureSets()}
 document.getElementById("prevMonth").addEventListener("click",()=>{state.cursor=new Date(state.cursor.getFullYear(),state.cursor.getMonth()-1,1);renderCalendar()});
