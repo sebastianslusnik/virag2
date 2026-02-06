@@ -30,7 +30,32 @@
   --c6:#cdad99;
   --c7:#e9ddcc;
 }
+::placeholder {
+  color: #5E3023;
+  opacity: 1;
+}
+/* width */
+::-webkit-scrollbar {
+  width: 0px;
+}
 
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+::-ms-input-placeholder { /* Edge 12 -18 */
+  color: #5E3023;
+}
 *{
   box-sizing:border-box;
   font-family: "Merriweather", serif !important;
@@ -371,8 +396,7 @@ body{
   border-top-left-radius:16px;
   border-top-right-radius:16px;
   background:var(--c1);
-  border:none;
-  padding:14px 14px 18px;
+  border: 14px solid var(--c1);
   max-height:86dvh;
   overflow:auto;
 }
@@ -432,13 +456,13 @@ body{
 }
 
 .manage-item{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  background:var(--c1);
-  border:1px solid var(--c4);
-  border-radius:12px;
-  padding:10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 10px 10px 20px;
+    background: var(--c7);
+    border: none;
+    border-radius: 14px;
 }
 
 .small{
@@ -518,7 +542,8 @@ hr.sep{
   #cancelBooking {
     display: none !important;
   }
-  #saveBooking {
+  #saveBooking,
+  #addCustomer {
     width: -webkit-fill-available;
     background: var(--c3);
     color: var(--c1);
@@ -526,6 +551,10 @@ hr.sep{
     margin-bottom: 14px;
     font-size: 16px;
     height: 50px;
+  }
+  #addCustomer {
+    margin-top: -10px;
+    margin-bottom: 20px;
   }
 
 @media(min-width:700px){
@@ -621,14 +650,16 @@ hr.sep{
 
 <div class="modal" id="customersModal">
   <div class="sheet">
-    <div style="display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom: 1px solid var(--c3);padding-bottom:8px;position: sticky;top:0;left:0;background:var(--c1);z-index:9999;">
       <h3>Ügyfelek kezelése</h3>
-      <button class="smallbtn" id="closeCustomers">Bezárás</button>
+      <button class="smallbtn" id="closeCustomers">&times;</button>
     </div>
-    <div class="form">
+    <div class="form" style="">
       <div class="row">
         <input class="input" id="custName" placeholder="Név">
         <input class="input" id="custPhone" placeholder="Telefon">
+      </div>
+      <div class="row" style="border-bottom: 1px solid var(--c3)">
         <button class="btn" id="addCustomer">Hozzáadás</button>
       </div>
       <div class="list-manage" id="customersList"></div>
@@ -694,13 +725,12 @@ items.forEach(b=>{const c=resolveCustomer(b.customerId),s=resolveService(b.servi
 </div>
 <div class="actions">
   <button class="btn icon ghost" data-act="edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-  <button class="btn icon danger" data-act="del"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M3 6h18" />
-  <path d="M10 6l1-2h2l1 2" />
-  <rect x="6" y="6" width="12" height="14" rx="2" />
-  <line x1="10" y1="10" x2="10" y2="18" />
-  <line x1="14" y1="10" x2="14" y2="18" />
+  <button class="btn icon danger" data-act="del"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M3 6h18"></path>
+  <path d="M10 6l1-2h2l1 2"></path>
+  <rect x="6" y="6" width="12" height="14" rx="2"></rect>
+  <line x1="10" y1="10" x2="10" y2="18"></line>
+  <line x1="14" y1="10" x2="14" y2="18"></line>
 </svg></button>
 </div>`;row.querySelector('[data-act="edit"]').onclick=()=>openBookingModal(b);row.querySelector('[data-act="del"]').onclick=()=>deleteBookingFlow(b.id);list.appendChild(row)})}
 function populateSelectors(){const custSel=document.getElementById("bkCustomer");custSel.innerHTML="";state.customers.sort((a,b)=>a.name.localeCompare(b.name,'hu')).forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent=`${c.name} ${c.phone?"• "+c.phone:""}`;custSel.appendChild(o)});const srvSel=document.getElementById("bkService");srvSel.innerHTML="";state.services.sort((a,b)=>a.name.localeCompare(b.name,'hu')).forEach(s=>{const o=document.createElement("option");o.value=s.id;o.textContent=`${s.name}${s.duration?" • "+s.duration+"p":""}${s.price?" • "+new Intl.NumberFormat("hu-HU").format(+s.price)+" Ft":""}`;srvSel.appendChild(o)})}
@@ -713,7 +743,13 @@ function closeServicesModal(){document.getElementById("servicesModal").classList
 function renderCustomersManage(){const wrap=document.getElementById("customersList");wrap.innerHTML="";state.customers.sort((a,b)=>a.name.localeCompare(b.name,'hu')).forEach(c=>{const row=document.createElement("div");row.className="manage-item";row.innerHTML=`<div style="flex:1"><div style="font-weight:700">${c.name}</div><div class="small">${c.phone||""}</div></div>
 <div class="actions">
   <button class="btn icon ghost" data-act="edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-  <button class="btn icon danger" data-act="del"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M8 6v14h8V6M10 6V4h4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  <button class="btn icon danger" data-act="del"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M3 6h18"></path>
+  <path d="M10 6l1-2h2l1 2"></path>
+  <rect x="6" y="6" width="12" height="14" rx="2"></rect>
+  <line x1="10" y1="10" x2="10" y2="18"></line>
+  <line x1="14" y1="10" x2="14" y2="18"></line>
+</svg></button>
 </div>`;row.querySelector('[data-act="edit"]').onclick=async()=>{const name=prompt("Név módosítása",c.name)||c.name;const phone=prompt("Telefon módosítása",c.phone||"")||"";await updateCustomer({...c,name,phone})};row.querySelector('[data-act="del"]').onclick=async()=>{if(!confirm("Biztosan törlöd az ügyfelet? A hozzá tartozó időpontok megmaradnak."))return;await deleteCustomer(c.id)};wrap.appendChild(row)})}
 function renderServicesManage(){const wrap=document.getElementById("servicesList");wrap.innerHTML="";state.services.sort((a,b)=>a.name.localeCompare(b.name,'hu')).forEach(s=>{const row=document.createElement("div");row.className="manage-item";row.innerHTML=`<div style="flex:1"><div style="font-weight:700">${s.name}</div><div class="small">${s.duration?`${s.duration} perc • `:""}${s.price?new Intl.NumberFormat("hu-HU").format(+s.price)+" Ft":""}</div></div>
 <div class="actions">
